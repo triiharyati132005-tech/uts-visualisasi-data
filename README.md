@@ -11,6 +11,7 @@ Aplikasi web dashboard interaktif berbasis **Streamlit** dan **Plotly** dengan d
   3. *Histogram:* Distribusi Tingkat Kepuasan Karyawan (EmpSatisfaction).
   4. *Scatter Plot:* Hubungan Skor Engagement vs Gaji berdasarkan Kategori Performance Score.
 - **Data Storytelling / Executive Summary:** Ringkasan temuan kunci untuk analisis manajemen.
+- live Dashboard: https://uts-visualisasi-data-rmmqepi3s93wr5wrkfypvn.streamlit.app/
 
 ## 🚀 Cara Menjalankan Secara Lokal
 ```bash
