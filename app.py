@@ -9,92 +9,111 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. CUSTOM CSS: MODERN macOS STYLING (FIX CONTRAST & INPUTS)
+# 2. CUSTOM CSS: OVERRIDE TOTAL TEKS & KONTRAST MAC OS STYLE
 st.markdown("""
     <style>
-    /* Font global ala Apple SF Pro */
-    html, body, [class*="css"] {
+    /* Font Global SF Pro / Apple Style */
+    html, body, [class*="css"], .stApp {
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-    }
-    
-    /* Background Utama */
-    .stApp {
         background-color: #1e1e1e !important;
         color: #f5f5f7 !important;
     }
     
-    /* Sidebar Ala macOS Finder Sidebar */
+    /* ---------------------------------------------------------
+       FIX SIDEBAR (CONTROL CENTER)
+    --------------------------------------------------------- */
     [data-testid="stSidebar"] {
         background-color: #282828 !important;
         border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
 
-    [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p {
-        color: #e5e5ea !important;
-        font-weight: 500 !important;
+    /* Paksa semua teks di sidebar berwarna terang */
+    [data-testid="stSidebar"] *, 
+    [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] span, 
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3 {
+        color: #f5f5f7 !important;
     }
 
-    /* Override Chip Multiselect ala macOS Tag */
+    /* Chip Multiselect / Tag Filter */
     span[data-baseweb="tag"] {
         background-color: #0a84ff !important;
         border-radius: 6px !important;
     }
-    span[data-baseweb="tag"] span {
+    span[data-baseweb="tag"] * {
         color: #ffffff !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
     }
-    
-    /* Card Widget KPI ala macOS Control Center */
+
+    /* Input Multiselect & Slider Box */
+    div[data-baseweb="select"] > div {
+        background-color: #1c1c1e !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 8px !important;
+    }
+
+    /* ---------------------------------------------------------
+       FIX METRIC CARDS (TOTAL KARYAWAN, GAJI, DLL)
+    --------------------------------------------------------- */
     div[data-testid="stMetric"] {
-        background: #2c2c2e !important;
+        background-color: #2c2c2e !important;
         border: 1px solid rgba(255, 255, 255, 0.12) !important;
         padding: 18px 22px !important;
         border-radius: 14px !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
-        transition: transform 0.2s ease, border-color 0.2s ease !important;
     }
-    
+
     div[data-testid="stMetric"]:hover {
-        transform: translateY(-2px) !important;
         border-color: #0a84ff !important;
     }
 
-    div[data-testid="stMetricLabel"] label, div[data-testid="stMetricLabel"] p {
-        color: #98989d !important;
-        font-weight: 500 !important;
-        font-size: 0.9rem !important;
+    /* Label Judul Metric (misal: Total Karyawan) */
+    div[data-testid="stMetricLabel"] *, 
+    div[data-testid="stMetricLabel"] p, 
+    div[data-testid="stMetricLabel"] label {
+        color: #a1a1a6 !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
     }
 
+    /* Angka / Value Metric (misal: 311, $69,021) */
+    div[data-testid="stMetricValue"] *, 
     div[data-testid="stMetricValue"] div {
         color: #ffffff !important;
         font-weight: 700 !important;
         font-size: 1.8rem !important;
     }
 
-    /* Container Card untuk Chart */
+    /* ---------------------------------------------------------
+       FIX EXPANDER & CHART CONTAINERS
+    --------------------------------------------------------- */
     .css-card {
-        background: #2c2c2e;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        background-color: #2c2c2e !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
     }
 
-    /* Expander Storytelling Card */
     .streamlit-expanderHeader {
         background-color: #2c2c2e !important;
         border-radius: 10px !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .streamlit-expanderHeader * {
         color: #ffffff !important;
+        font-weight: 600 !important;
     }
 
     .stExpander p, .stExpander li {
-        color: #d1d1d6 !important;
-        line-height: 1.6 !important;
+        color: #e5e5ea !important;
     }
-    
-    /* Slider Warna Accent Blue Apple */
+
+    /* Color Slider */
     .stSlider > div > div > div > div {
         background-color: #0a84ff !important;
     }
@@ -111,8 +130,8 @@ def load_data():
 df = load_data()
 
 # 4. SIDEBAR (CONTROL CENTER)
-st.sidebar.markdown("### 🎛️ Control Center")
-st.sidebar.caption("Filter Dashboard SDM")
+st.sidebar.markdown("## 🎛️ Control Center")
+st.sidebar.markdown("Filter Dashboard SDM")
 st.sidebar.markdown("---")
 
 list_dept = df['Department'].dropna().unique().tolist()
@@ -148,7 +167,7 @@ df_filtered = df[
 st.markdown("""
     <div style="background-color: #2c2c2e; padding: 22px 26px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px;">
         <h2 style="margin:0; color: #ffffff; font-weight: 700;">💼 HR Analytics & Employee Performance</h2>
-        <p style="margin: 6px 0 0 0; color: #98989d; font-size: 0.95rem;">System Information Data Visualization Dashboard — HRDataset_v14 Analysis</p>
+        <p style="margin: 6px 0 0 0; color: #a1a1a6; font-size: 0.95rem;">System Information Data Visualization Dashboard — HRDataset_v14 Analysis</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -183,7 +202,7 @@ with col4:
 st.write("")
 
 # 7. VISUALISASI DATA (PLOTLY CHARTS)
-st.markdown("### 📊 Analytics Overview")
+st.markdown("<h3 style='color:#ffffff;'>📊 Analytics Overview</h3>", unsafe_allow_html=True)
 
 apple_colors = ['#0a84ff', '#30d158', '#ff9f0a', '#bf5af2', '#ff453a', '#64d2ff', '#ffd60a']
 
@@ -204,7 +223,7 @@ with row1_col1:
     fig_bar.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e5e5ea"),
+        font=dict(color="#f5f5f7"),
         showlegend=False,
         margin=dict(l=10, r=10, t=10, b=10),
         xaxis=dict(title="", showgrid=False),
@@ -228,7 +247,7 @@ with row1_col2:
     fig_pie.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e5e5ea"),
+        font=dict(color="#f5f5f7"),
         margin=dict(l=10, r=10, t=10, b=10)
     )
     st.plotly_chart(fig_pie, use_container_width=True)
@@ -248,7 +267,7 @@ with row2_col1:
     fig_hist.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e5e5ea"),
+        font=dict(color="#f5f5f7"),
         margin=dict(l=10, r=10, t=10, b=10),
         xaxis=dict(title="Tingkat Kepuasan (1-5)", showgrid=False),
         yaxis=dict(title="Jumlah Karyawan", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
@@ -270,7 +289,7 @@ with row2_col2:
     fig_scatter.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e5e5ea"),
+        font=dict(color="#f5f5f7"),
         margin=dict(l=10, r=10, t=10, b=10),
         xaxis=dict(title="Skor Engagement", showgrid=False),
         yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
