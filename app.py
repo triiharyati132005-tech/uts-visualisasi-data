@@ -2,82 +2,106 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# ---------------------------------------------------------
-# 1. KONFIGURASI HALAMAN & TEMA UI (macOS Style)
-# ---------------------------------------------------------
+# 1. KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="HR Analytics Dashboard - macOS UI",
     page_icon="💼",
     layout="wide"
 )
 
-# Custom CSS: Styling ala macOS / Apple Frosted Glass UI
+# 2. CUSTOM CSS: MODERN macOS STYLING (FIX CONTRAST & INPUTS)
 st.markdown("""
     <style>
+    /* Font global ala Apple SF Pro */
     html, body, [class*="css"] {
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     }
     
+    /* Background Utama */
     .stApp {
-        background-color: #0f1117;
+        background-color: #1e1e1e !important;
+        color: #f5f5f7 !important;
     }
     
+    /* Sidebar Ala macOS Finder Sidebar */
     [data-testid="stSidebar"] {
-        background-color: #161922;
-        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        background-color: #282828 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p {
+        color: #e5e5ea !important;
+        font-weight: 500 !important;
+    }
+
+    /* Override Chip Multiselect ala macOS Tag */
+    span[data-baseweb="tag"] {
+        background-color: #0a84ff !important;
+        border-radius: 6px !important;
+    }
+    span[data-baseweb="tag"] span {
+        color: #ffffff !important;
+        font-weight: 500 !important;
     }
     
-    .css-card {
-        background: #1e2230;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-    
+    /* Card Widget KPI ala macOS Control Center */
     div[data-testid="stMetric"] {
-        background: #1e2230;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 18px 22px;
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        background: #2c2c2e !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        padding: 18px 22px !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+        transition: transform 0.2s ease, border-color 0.2s ease !important;
     }
     
     div[data-testid="stMetric"]:hover {
-        transform: translateY(-3px);
-        border-color: #0A84FF;
+        transform: translateY(-2px) !important;
+        border-color: #0a84ff !important;
     }
 
-    div[data-testid="stMetricLabel"] {
-        color: #8e8e93;
-        font-weight: 500;
-        font-size: 0.9rem;
+    div[data-testid="stMetricLabel"] label, div[data-testid="stMetricLabel"] p {
+        color: #98989d !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
     }
 
-    div[data-testid="stMetricValue"] {
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 1.7rem;
+    div[data-testid="stMetricValue"] div {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 1.8rem !important;
     }
 
+    /* Container Card untuk Chart */
+    .css-card {
+        background: #2c2c2e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Expander Storytelling Card */
     .streamlit-expanderHeader {
-        background-color: #1e2230 !important;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background-color: #2c2c2e !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         color: #ffffff !important;
     }
+
+    .stExpander p, .stExpander li {
+        color: #d1d1d6 !important;
+        line-height: 1.6 !important;
+    }
     
+    /* Slider Warna Accent Blue Apple */
     .stSlider > div > div > div > div {
-        background-color: #0A84FF !important;
+        background-color: #0a84ff !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------------
-# 2. LOAD DATASET HR (Membaca file HRDataset_v14.csv)
-# ---------------------------------------------------------
+# 3. LOAD DATASET HR
 @st.cache_data
 def load_data():
     df = pd.read_csv('HRDataset_v14.csv')
@@ -86,22 +110,18 @@ def load_data():
 
 df = load_data()
 
-# ---------------------------------------------------------
-# 3. SIDEBAR (FILTER INTERAKTIF / CONTROL CENTER)
-# ---------------------------------------------------------
+# 4. SIDEBAR (CONTROL CENTER)
 st.sidebar.markdown("### 🎛️ Control Center")
 st.sidebar.caption("Filter Dashboard SDM")
 st.sidebar.markdown("---")
 
-# Filter 1: Departemen
-list_dept = df['Department'].unique().tolist()
+list_dept = df['Department'].dropna().unique().tolist()
 selected_dept = st.sidebar.multiselect(
     "Pilih Departemen:",
     options=list_dept,
     default=list_dept
 )
 
-# Filter 2: Status Pernikahan
 list_marital = df['MaritalDesc'].dropna().unique().tolist()
 selected_marital = st.sidebar.multiselect(
     "Status Pernikahan:",
@@ -109,7 +129,6 @@ selected_marital = st.sidebar.multiselect(
     default=list_marital
 )
 
-# Filter 3: Rentang Gaji (Salary Slider)
 min_salary, max_salary = int(df['Salary'].min()), int(df['Salary'].max())
 selected_salary = st.sidebar.slider(
     "Rentang Gaji ($):",
@@ -118,35 +137,31 @@ selected_salary = st.sidebar.slider(
     value=(min_salary, max_salary)
 )
 
-# Filtering Data Sesuai Pilihan Sidebar
+# Filtering Data
 df_filtered = df[
     (df['Department'].isin(selected_dept)) &
     (df['MaritalDesc'].isin(selected_marital)) &
     (df['Salary'].between(selected_salary[0], selected_salary[1]))
 ]
 
-# ---------------------------------------------------------
-# 4. HEADER WEB & EXECUTIVE SUMMARY
-# ---------------------------------------------------------
+# 5. HEADER WEB & STORYTELLING
 st.markdown("""
-    <div style="background-color: #161922; padding: 20px 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px;">
+    <div style="background-color: #2c2c2e; padding: 22px 26px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px;">
         <h2 style="margin:0; color: #ffffff; font-weight: 700;">💼 HR Analytics & Employee Performance</h2>
-        <p style="margin: 4px 0 0 0; color: #8e8e93; font-size: 0.95rem;">System Information Data Visualization Dashboard — HRDataset_v14 Analysis</p>
+        <p style="margin: 6px 0 0 0; color: #98989d; font-size: 0.95rem;">System Information Data Visualization Dashboard — HRDataset_v14 Analysis</p>
     </div>
 """, unsafe_allow_html=True)
 
 with st.expander("📌 Executive Summary & Key Insights", expanded=True):
     st.write("""
     * **Struktur Kompensasi:** Departemen Executive dan IT/IS mencatatkan rata-rata gaji tertinggi dibandingkan unit operasional/produksi.
-    * **Sumber Rekrutmen Utama:** Platform digital seperti *Indeed* dan *LinkedIn* menjadi kanal rekrutmen yang paling banyak menghasilkan kandidat aktif.
-    * **Kepuasan & Engagement:** Skor keterikatan (Engagement Survey) menunjukkan korelasi positif terhadap penilaian kinerja (Performance Score) karyawan.
+    * **Sumber Rekrutmen Utama:** Platform digital seperti *Indeed* dan *LinkedIn* menjadi kanal rekrutmen paling efektif.
+    * **Kepuasan & Engagement:** Skor keterikatan (Engagement Survey) berbanding lurus dengan hasil penilaian kinerja (Performance Score).
     """)
 
 st.write("")
 
-# ---------------------------------------------------------
-# 5. KPI METRICS WIDGETS (Tampilan Card macOS)
-# ---------------------------------------------------------
+# 6. KPI METRICS WIDGETS
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -167,19 +182,16 @@ with col4:
 
 st.write("")
 
-# ---------------------------------------------------------
-# 6. VISUALISASI DATA INTERAKTIF (Plotly Charts)
-# ---------------------------------------------------------
+# 7. VISUALISASI DATA (PLOTLY CHARTS)
 st.markdown("### 📊 Analytics Overview")
 
-apple_colors = ['#0A84FF', '#30D158', '#FF9F0A', '#BF5AF2', '#FF453A', '#64D2FF', '#FFD60A']
+apple_colors = ['#0a84ff', '#30d158', '#ff9f0a', '#bf5af2', '#ff453a', '#64d2ff', '#ffd60a']
 
-# Row 1 Grafik
 row1_col1, row1_col2 = st.columns(2)
 
 with row1_col1:
     st.markdown('<div class="css-card">', unsafe_allow_html=True)
-    st.markdown("**1. Rata-Rata Gaji per Departemen ($)**")
+    st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>1. Rata-Rata Gaji per Departemen ($)</h4>", unsafe_allow_html=True)
     dept_salary = df_filtered.groupby('Department')['Salary'].mean().reset_index()
     fig_bar = px.bar(
         dept_salary,
@@ -192,18 +204,18 @@ with row1_col1:
     fig_bar.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#ffffff"),
+        font=dict(color="#e5e5ea"),
         showlegend=False,
-        margin=dict(l=10, r=10, t=30, b=10),
+        margin=dict(l=10, r=10, t=10, b=10),
         xaxis=dict(title="", showgrid=False),
-        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
     )
     st.plotly_chart(fig_bar, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with row1_col2:
     st.markdown('<div class="css-card">', unsafe_allow_html=True)
-    st.markdown("**2. Proporsi Sumber Rekrutmen (Recruitment Source)**")
+    st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>2. Proporsi Sumber Rekrutmen</h4>", unsafe_allow_html=True)
     rec_counts = df_filtered['RecruitmentSource'].value_counts().reset_index()
     rec_counts.columns = ['RecruitmentSource', 'Count']
     fig_pie = px.pie(
@@ -216,38 +228,37 @@ with row1_col2:
     fig_pie.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#ffffff"),
-        margin=dict(l=10, r=10, t=30, b=10)
+        font=dict(color="#e5e5ea"),
+        margin=dict(l=10, r=10, t=10, b=10)
     )
     st.plotly_chart(fig_pie, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Row 2 Grafik
 row2_col1, row2_col2 = st.columns(2)
 
 with row2_col1:
     st.markdown('<div class="css-card">', unsafe_allow_html=True)
-    st.markdown("**3. Distribusi Tingkat Kepuasan Karyawan**")
+    st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>3. Distribusi Tingkat Kepuasan Karyawan</h4>", unsafe_allow_html=True)
     fig_hist = px.histogram(
         df_filtered,
         x='EmpSatisfaction',
         nbins=10,
-        color_discrete_sequence=['#0A84FF']
+        color_discrete_sequence=['#0a84ff']
     )
     fig_hist.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#ffffff"),
-        margin=dict(l=10, r=10, t=30, b=10),
+        font=dict(color="#e5e5ea"),
+        margin=dict(l=10, r=10, t=10, b=10),
         xaxis=dict(title="Tingkat Kepuasan (1-5)", showgrid=False),
-        yaxis=dict(title="Jumlah Karyawan", showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+        yaxis=dict(title="Jumlah Karyawan", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
     )
     st.plotly_chart(fig_hist, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with row2_col2:
     st.markdown('<div class="css-card">', unsafe_allow_html=True)
-    st.markdown("**4. Engagement Score vs Gaji per Performance Score**")
+    st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>4. Engagement Score vs Gaji</h4>", unsafe_allow_html=True)
     fig_scatter = px.scatter(
         df_filtered,
         x='EngagementSurvey',
@@ -259,10 +270,10 @@ with row2_col2:
     fig_scatter.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#ffffff"),
-        margin=dict(l=10, r=10, t=30, b=10),
+        font=dict(color="#e5e5ea"),
+        margin=dict(l=10, r=10, t=10, b=10),
         xaxis=dict(title="Skor Engagement", showgrid=False),
-        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
