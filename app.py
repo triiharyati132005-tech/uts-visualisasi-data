@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# 2. CUSTOM CSS: PAKSA SEMUA TEKS TERANG & INPUT ABU-ABU GELAP
+# 2. CUSTOM CSS: OVERRIDE TOTAL MULTISELECT & TEKS
 # ---------------------------------------------------------
 st.markdown("""
     <style>
@@ -39,15 +39,15 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* FIX KOTAK MULTISELECT SURAM/PUTIH -> UBAH JADI DARK MAC OS */
-    div[data-baseweb="select"] > div {
+    /* FIX KOTAK INPUT MULTISELECT BIAR GAK PUTIH (PAKSA BACKGROUND ABU DARK) */
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] input {
         background-color: #2c303b !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 10px !important;
         color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
     }
     
-    /* CHIP MULTISELECT ALA APPLE (BLUE ACCENT) */
+    /* CHIP TAG MULTISELECT BIRU APPLE */
     span[data-baseweb="tag"] {
         background-color: #0a84ff !important;
         border-radius: 6px !important;
@@ -57,7 +57,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* CUSTOM KPI CARDS (HTML MURNI UNTUK MEMASTIKAN TEKS TERANG BENDERANG) */
+    /* KPI CARDS HTML MURNI */
     .kpi-card {
         background-color: #242832;
         border: 1px solid rgba(255, 255, 255, 0.12);
@@ -80,7 +80,7 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* CHART CARD CONTAINER */
+    /* CONTAINER GRAFIK CARD */
     .chart-card {
         background-color: #242832;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -90,12 +90,11 @@ st.markdown("""
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
 
-    /* EXPANDER INSIGHT STYLING */
+    /* EXPANDER STYLING */
     .streamlit-expanderHeader {
         background-color: #242832 !important;
         border-radius: 10px !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #ffffff !important;
     }
     .streamlit-expanderHeader * {
         color: #ffffff !important;
@@ -179,7 +178,7 @@ with st.expander("📌 Executive Summary & Key Insights", expanded=True):
 st.write("")
 
 # ---------------------------------------------------------
-# 6. KPI METRICS (DIBUAT DENGAN CARD HTML CLEAR & JELAS)
+# 6. KPI METRICS (CARD HTML CLEAR)
 # ---------------------------------------------------------
 col1, col2, col3, col4 = st.columns(4)
 
@@ -223,7 +222,7 @@ with col4:
 st.write("")
 
 # ---------------------------------------------------------
-# 7. VISUALISASI DATA (PLOTLY CHARTS)
+# 7. VISUALISASI DATA (PLOTLY CHARTS - FIX LEGEND WHITE)
 # ---------------------------------------------------------
 st.markdown("<h3 style='color:#ffffff; margin-bottom:15px;'>📊 Analytics Overview</h3>", unsafe_allow_html=True)
 
@@ -246,11 +245,11 @@ with row1_col1:
     fig_bar.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e2e4e9"),
+        font=dict(color="#ffffff", size=12), # Paksa warna font terang
         showlegend=False,
         margin=dict(l=10, r=10, t=10, b=10),
-        xaxis=dict(title="", showgrid=False),
-        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
+        xaxis=dict(title="", showgrid=False, tickfont=dict(color="#ffffff")),
+        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="#ffffff"))
     )
     st.plotly_chart(fig_bar, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -270,7 +269,8 @@ with row1_col2:
     fig_pie.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e2e4e9"),
+        font=dict(color="#ffffff", size=12), # Paksa warna teks legend jadi putih terang
+        legend=dict(font=dict(color="#ffffff", size=11)), # Explicit Legend Color Fix
         margin=dict(l=10, r=10, t=10, b=10)
     )
     st.plotly_chart(fig_pie, use_container_width=True)
@@ -290,10 +290,10 @@ with row2_col1:
     fig_hist.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e2e4e9"),
+        font=dict(color="#ffffff", size=12),
         margin=dict(l=10, r=10, t=10, b=10),
-        xaxis=dict(title="Tingkat Kepuasan (1-5)", showgrid=False),
-        yaxis=dict(title="Jumlah Karyawan", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
+        xaxis=dict(title="Tingkat Kepuasan (1-5)", showgrid=False, tickfont=dict(color="#ffffff")),
+        yaxis=dict(title="Jumlah Karyawan", showgrid=True, gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="#ffffff"))
     )
     st.plotly_chart(fig_hist, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -312,10 +312,11 @@ with row2_col2:
     fig_scatter.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#e2e4e9"),
+        font=dict(color="#ffffff", size=12),
+        legend=dict(font=dict(color="#ffffff", size=11)), # Explicit Legend Color Fix
         margin=dict(l=10, r=10, t=10, b=10),
-        xaxis=dict(title="Skor Engagement", showgrid=False),
-        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)")
+        xaxis=dict(title="Skor Engagement", showgrid=False, tickfont=dict(color="#ffffff")),
+        yaxis=dict(title="Gaji ($)", showgrid=True, gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="#ffffff"))
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
